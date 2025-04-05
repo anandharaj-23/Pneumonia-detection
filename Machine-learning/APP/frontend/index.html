@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pneumonia Detection Portal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="form-container">
+    <form id="pneumoniaForm" enctype="multipart/form-data">
+      <h1>🩺 Pneumonia Detection Portal</h1>
+      <p>Upload patient X-ray and fill details to analyze for Pneumonia</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Patient Name</label>
+          <input type="text" name="name" required />
+        </div>
+
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" name="age" min="0" required />
+        </div>
+
+        <div class="form-group">
+          <label>Gender</label>
+          <select name="gender" required>
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Blood Pressure (mmHg)</label>
+          <input type="text" name="bp" placeholder="e.g. 120/80" />
+        </div>
+
+        <div class="form-group">
+          <label>Oxygen Level (%)</label>
+          <input type="number" name="oxygen" placeholder="e.g. 96" />
+        </div>
+
+        <div class="form-group">
+          <label>Upload Chest X-ray Image</label>
+          <input type="file" name="xray" accept="image/*" required />
+        </div>
+      </div>
+
+      <button type="submit">🔍 Analyze</button>
+    </form>
+
+    <div class="result" id="resultBox"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("pneumoniaForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch("http://127.0.0.1:5000/predict", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+        const newTab = window.open();
+
+        if (data.prediction) {
+          newTab.document.write(`<h1 style="color:green;">🔍 Result: ${data.prediction}</h1>`);
+        } else if (data.error) {
+          newTab.document.write(`<h1 style="color:red;">❌ Error: ${data.error}</h1>`);
+        } else {
+          newTab.document.write(`<h1>Unexpected response</h1>`);
+        }
+
+      } catch (err) {
+        const newTab = window.open();
+        newTab.document.write(`<h1 style="color:red;">❌ Error connecting to server.</h1>`);
+      }
+    });
+  </script>
+</body>
+</html>
