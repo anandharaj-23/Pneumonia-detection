@@ -64,11 +64,10 @@
       const formData = new FormData(form);
 
       try {
-        const res = await fetch("https://pneumonia-detection-2-y5w5.onrender.com/predict", {
-  method: "POST",
-  body: formData,
-});
-
+        const res = await fetch("https://pneumonia-detection-3.onrender.com/predict", {
+          method: "POST",
+          body: formData,
+        });
 
         const data = await res.json();
         const newTab = window.open();
